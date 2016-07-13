@@ -1,0 +1,141 @@
+heat_template_version: 2015-04-30
+
+description: >
+  HOT template to creates a virtual network with one subnet each.
+  set allow-transit, forwarding_mode and route-targets
+parameters:
+  private_net_1_name:
+    type: string
+    description: Name of private network to be created
+  prefix_1:
+    type: string
+    description: Private network address prefix
+  gateway_1:
+    type: string
+    description: Private network address prefix
+  prefix_len_1:
+    type: string
+    description: Private network address prefix len
+  prefix_2:
+    type: string
+    description: Private network address prefix
+  gateway_2:
+    type: string
+    description: Private network address prefix
+  prefix_len_2:
+    type: string
+    description: Private network address prefix len
+  prefix_3:
+    type: string
+    description: Private network address prefix
+  gateway_3:
+    type: string
+    description: Private network address prefix
+  prefix_len_3:
+    type: string
+    description: Private network address prefix len
+  virtual_network_properties_rpf:
+    type: string
+    description: rpf for the VirtualNetwork
+  is_shared:
+    type: boolean
+    description: is_shared for the VirtualNetwork
+  forwarding_mode:
+    type: string
+    description: Private network forwarding_mode
+  is_enable_dhcp:
+    type: boolean
+    description: enable_dhcp for the VirtualNetwork
+  pools_start_1:
+    type: string
+    description: start for the VirtualNetwork
+  pools_end_1:
+    type: string
+    description: end for the VirtualNetwork
+  pools_start_2:
+    type: string
+    description: start for the VirtualNetwork
+  pools_end_2:
+    type: string
+    description: end for the VirtualNetwork
+  pools_start_3:
+    type: string
+    description: start for the VirtualNetwork
+  pools_end_3:
+    type: string
+    description: end for the VirtualNetwork
+  route_target_1:
+    type: string
+    description: Private network route-target
+  project:
+    type: string
+    description: project for the VirtualNetwork
+
+
+resources:
+
+  template_NetworkIpam_1:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name: { get_param: private_net_1_name }
+
+  template_VirtualNetwork_1:
+    type: OS::ContrailV2::VirtualNetwork
+    properties:
+      name: { get_param: private_net_1_name }
+      is_shared: { get_param: is_shared }
+      virtual_network_properties:
+        {
+          virtual_network_properties_forwarding_mode: { get_param: forwarding_mode },
+          virtual_network_properties_rpf: { get_param: virtual_network_properties_rpf },
+        }
+      route_target_list:
+        {
+          route_target_list_route_target: [{ get_param: route_target_1 }],
+        }
+      network_ipam_refs: [{ get_resource: template_NetworkIpam_1 }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            [
+              {
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: prefix_1 },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: prefix_len_1 },
+                },
+              network_ipam_refs_data_ipam_subnets_allocation_pools:
+                [{
+                  network_ipam_refs_data_ipam_subnets_allocation_pools_start: { get_param: pools_start_1 },
+                  network_ipam_refs_data_ipam_subnets_allocation_pools_end: { get_param: pools_end_1 },
+                }],
+              network_ipam_refs_data_ipam_subnets_default_gateway: { get_param: gateway_1 }
+              },
+              {
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: prefix_2 },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: prefix_len_2 },
+                },
+              network_ipam_refs_data_ipam_subnets_allocation_pools:
+                [{
+                  network_ipam_refs_data_ipam_subnets_allocation_pools_start: { get_param: pools_start_2 },
+                  network_ipam_refs_data_ipam_subnets_allocation_pools_end: { get_param: pools_end_2 },
+                }],
+              network_ipam_refs_data_ipam_subnets_default_gateway: { get_param: gateway_2 }
+              },
+              {
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: prefix_3 },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: prefix_len_3 },
+                },
+              network_ipam_refs_data_ipam_subnets_allocation_pools:
+                [{
+                  network_ipam_refs_data_ipam_subnets_allocation_pools_start: { get_param: pools_start_3 },
+                  network_ipam_refs_data_ipam_subnets_allocation_pools_end: { get_param: pools_end_3 },
+                }],
+              network_ipam_refs_data_ipam_subnets_default_gateway: { get_param: gateway_3 }
+              }
+            ]
+         }]
