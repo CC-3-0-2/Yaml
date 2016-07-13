@@ -1,0 +1,232 @@
+heat_template_version: 2015-04-30
+
+description: >
+  HOT template to create a NetworkPolicy:
+
+parameters:
+# Policy parameters
+  policy_name:
+    type: string
+    description: Name of the Policy
+  policy_fq_name:
+    type: string
+    description: FQDN of the Policy
+  policy_name_2:
+    type: string
+    description: Name of the Policy
+  policy_fq_name_2:
+    type: string
+    description: FQDN of the Policy
+  simple_action:
+    type: string
+    description: Pass or Deny
+  protocol:
+    type: string
+    description: Protocol
+  src_port_end:
+    type: number
+    description: End of the Source Port Range
+  src_port_start:
+    type: number
+    description: Start of the Source Port Range
+  direction:
+    type: string
+    description: Direction of the Policy
+  dst_port_end:
+    type: number
+    description: End of the Destination Port Range
+  dst_port_start:
+    type: number
+    description: Start of the Destination Port Range
+  dst_port_end_80:
+    type: number
+    description: End of the Destination Port Range
+  dst_port_start_80:
+    type: number
+    description: Start of the Destination Port Range
+  src_port_2:
+    type: number
+    description: End of the Source Port Range
+  src_port_2:
+    type: number
+    description: Start of the Source Port Range
+  dst_port_2:
+    type: number
+    description: End of the Destination Port Range
+  dst_port_2:
+    type: number
+    description: Start of the Destination Port Range
+ # VN Parameters
+  left_vn_fqdn:
+    type: string
+    description: FQ Name of the left network
+  right_vn_fqdn:
+    type: string
+    description: FQ Name of the left network
+  v4v6_vn_fqdn:
+    type: string
+    description: FQ Name of the left network
+  other_vn_fqdn:
+    type: string
+    description: FQ Name of the left network
+  left_vn_fqdn_2:
+    type: string
+    description: FQ Name of the left network
+  right_vn_fqdn_2:
+    type: string
+    description: FQ Name of the left network
+
+
+
+
+resources:
+  template_NetworkPolicy_1:
+    type: OS::ContrailV2::NetworkPolicy
+    properties:
+      name: { get_param: policy_name }
+      network_policy_entries:
+        {
+          network_policy_entries_policy_rule:
+            [{
+                network_policy_entries_policy_rule_direction: { get_param: direction },
+                network_policy_entries_policy_rule_protocol: { get_param: protocol },
+                network_policy_entries_policy_rule_src_ports:
+                  [{
+                     network_policy_entries_policy_rule_src_ports_start_port: { get_param: src_port_start },
+                     network_policy_entries_policy_rule_src_ports_end_port: { get_param: src_port_end }
+                  }],
+                network_policy_entries_policy_rule_dst_ports:
+                  [{
+                     network_policy_entries_policy_rule_dst_ports_start_port: { get_param: dst_port_start },
+                     network_policy_entries_policy_rule_dst_ports_end_port: { get_param: dst_port_end }
+                  }],
+                network_policy_entries_policy_rule_dst_addresses:
+                  [{
+                     network_policy_entries_policy_rule_dst_addresses_virtual_network: { get_param: left_vn_fqdn }
+                  }],
+                network_policy_entries_policy_rule_src_addresses:
+                  [{
+                     network_policy_entries_policy_rule_src_addresses_virtual_network: { get_param: right_vn_fqdn }
+                  }],
+                network_policy_entries_policy_rule_action_list:
+                  {
+                    network_policy_entries_policy_rule_action_list_simple_action: { get_param: simple_action },
+                  },
+             }],
+          network_policy_entries_policy_rule:
+             [{
+                network_policy_entries_policy_rule_direction: { get_param: direction },
+                network_policy_entries_policy_rule_protocol: { get_param: protocol },
+                network_policy_entries_policy_rule_src_ports:
+                  [{
+                     network_policy_entries_policy_rule_src_ports_start_port: { get_param: src_port_start },
+                     network_policy_entries_policy_rule_src_ports_end_port: { get_param: src_port_end }
+                  }],
+                network_policy_entries_policy_rule_dst_ports:
+                  [{
+                     network_policy_entries_policy_rule_dst_ports_start_port: { get_param: dst_port_start },
+                     network_policy_entries_policy_rule_dst_ports_end_port: { get_param: dst_port_end }
+                  }],
+                network_policy_entries_policy_rule_dst_addresses:
+                  [{
+                     network_policy_entries_policy_rule_dst_addresses_virtual_network: { get_param: left_vn_fqdn }
+                  }],
+                network_policy_entries_policy_rule_src_addresses:
+                  [{
+                     network_policy_entries_policy_rule_src_addresses_virtual_network: { get_param: v4v6_vn_fqdn }
+                  }],
+                network_policy_entries_policy_rule_action_list:
+                  {
+                    network_policy_entries_policy_rule_action_list_simple_action: { get_param: simple_action },
+                  },
+             }],
+          network_policy_entries_policy_rule:
+             [{
+                network_policy_entries_policy_rule_direction: { get_param: direction },
+                network_policy_entries_policy_rule_protocol: { get_param: protocol },
+                network_policy_entries_policy_rule_src_ports:
+                  [{
+                     network_policy_entries_policy_rule_src_ports_start_port: { get_param: src_port_start },
+                     network_policy_entries_policy_rule_src_ports_end_port: { get_param: src_port_end }
+                  }],
+                network_policy_entries_policy_rule_dst_ports:
+                  [{
+                     network_policy_entries_policy_rule_dst_ports_start_port: { get_param: dst_port_start },
+                     network_policy_entries_policy_rule_dst_ports_end_port: { get_param: dst_port_end }
+                  }],
+                network_policy_entries_policy_rule_dst_addresses:
+                  [{
+                     network_policy_entries_policy_rule_dst_addresses_virtual_network: { get_param: left_vn_fqdn }
+                  }],
+                network_policy_entries_policy_rule_src_addresses:
+                  [{
+                     network_policy_entries_policy_rule_src_addresses_virtual_network: { get_param: other_vn_fqdn }
+                  }],
+                network_policy_entries_policy_rule_action_list:
+                  {
+                    network_policy_entries_policy_rule_action_list_simple_action: { get_param: simple_action },
+                  },
+             }],
+          network_policy_entries_policy_rule:
+             [{
+                network_policy_entries_policy_rule_direction: { get_param: direction },
+                network_policy_entries_policy_rule_protocol: { get_param: protocol },
+                network_policy_entries_policy_rule_src_ports:
+                  [{
+                     network_policy_entries_policy_rule_src_ports_start_port: { get_param: src_port_start },
+                     network_policy_entries_policy_rule_src_ports_end_port: { get_param: src_port_end }
+                  }],
+                network_policy_entries_policy_rule_dst_ports:
+                  [{
+                     network_policy_entries_policy_rule_dst_ports_start_port: { get_param: dst_port_start_80 },
+                     network_policy_entries_policy_rule_dst_ports_end_port: { get_param: dst_port_end_80 }
+                  }],
+                network_policy_entries_policy_rule_dst_addresses:
+                  [{
+                     network_policy_entries_policy_rule_dst_addresses_virtual_network: { get_param: left_vn_fqdn }
+                  }],
+                network_policy_entries_policy_rule_src_addresses:
+                  [{
+                     network_policy_entries_policy_rule_src_addresses_virtual_network: { get_param: right_vn_fqdn }
+                  }],
+                network_policy_entries_policy_rule_action_list:
+                  {
+                    network_policy_entries_policy_rule_action_list_simple_action: { get_param: simple_action },
+                  },
+             }],
+       }
+
+  template_NetworkPolicy_2:
+    type: OS::ContrailV2::NetworkPolicy
+    properties:
+      name: { get_param: policy_name_2 }
+      network_policy_entries:
+        {
+          network_policy_entries_policy_rule:
+            [{
+                network_policy_entries_policy_rule_direction: { get_param: direction },
+                network_policy_entries_policy_rule_protocol: { get_param: protocol },
+                network_policy_entries_policy_rule_src_ports:
+                  [{
+                     network_policy_entries_policy_rule_src_ports_start_port: { get_param: src_port_2 },
+                     network_policy_entries_policy_rule_src_ports_end_port: { get_param: src_port_2 }
+                  }],
+                network_policy_entries_policy_rule_dst_ports:
+                  [{
+                     network_policy_entries_policy_rule_dst_ports_start_port: { get_param: dst_port_2 },
+                     network_policy_entries_policy_rule_dst_ports_end_port: { get_param: dst_port_2 }
+                  }],
+                network_policy_entries_policy_rule_dst_addresses:
+                  [{
+                     network_policy_entries_policy_rule_dst_addresses_virtual_network: { get_param: left_vn_fqdn_2 }
+                  }],
+                network_policy_entries_policy_rule_src_addresses:
+                  [{
+                     network_policy_entries_policy_rule_src_addresses_virtual_network: { get_param: right_vn_fqdn_2 }
+                  }],
+                network_policy_entries_policy_rule_action_list:
+                  {
+                    network_policy_entries_policy_rule_action_list_simple_action: { get_param: simple_action },
+                  },
+            }],
+        }
