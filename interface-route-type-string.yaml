@@ -1,0 +1,38 @@
+heat_template_version: 2015-04-30
+
+description: >
+  HOT template to create a InterfaceRouteTable:
+
+parameters:
+  name:
+    type: string
+    description: name for the InterfaceRouteTable
+  fq_name:
+    type: string
+    description: fq_name for the InterfaceRouteTable
+  display_name:
+    type: string
+    description: display_name for the InterfaceRouteTable
+  static_route_prefix:
+    type: string
+    label: IRT
+    description: prefix for the InterfaceRouteTable
+  project:
+    type: string
+    description: project for the InterfaceRouteTable
+
+resources:
+  template_InterfaceRouteTable:
+    type: OS::ContrailV2::InterfaceRouteTable
+    properties:
+      name: { get_param: name }
+      fq_name: { get_param: fq_name }
+      display_name: { get_param: display_name }
+      interface_route_table_routes:
+        {
+          interface_route_table_routes_route:
+            [{
+              interface_route_table_routes_route_prefix: { get_param: static_route_prefix }
+            }],
+        }
+      project: { get_param: project }
