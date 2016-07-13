@@ -1,0 +1,55 @@
+heat_template_version: 2015-04-30
+
+parameters:
+  template_VirtualNetwork_1:
+    type: string
+    description: Name of management network to be created
+
+  svm_name_1:
+    type: string
+    description: Name of the SVM
+
+  flavor:
+    type: string
+    description: Flavor of the end VMs
+  image:
+    type: string
+    description: Name of the end VM image
+
+
+
+resources:
+
+  template_VirtualMachineInterface_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: template_VirtualNetwork_1 },
+        }
+      virtual_network_refs: [{ get_param: template_VirtualNetwork_1 }]
+
+
+  template_InstanceIp_1:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ template_VirtualMachineInterface_1 ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: template_VirtualMachineInterface_1 }]
+      virtual_network_refs: [{ get_param: template_VirtualNetwork_1 }]
+
+
+  instance_1:
+    type: OS::Nova::Server
+    depends_on: [ template_InstanceIp_1 ]
+    properties:
+      name: {get_param: svm_name_1 }
+      image: { get_param:  image }
+      flavor: { get_param: flavor }
+      networks:
+        - port: { get_resource: template_VirtualMachineInterface_1 }
+      user_data_format: RAW 
+      user_data: |
+            #cloud-config
+            password: ubuntu
+            chpasswd: { expire: False }
+            ssh_pwauth: True
