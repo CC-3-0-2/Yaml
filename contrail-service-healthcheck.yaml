@@ -1,0 +1,58 @@
+heat_template_version: 2015-04-30
+
+description: >
+  HOT template to create a ServiceHealthCheck:
+
+parameters:
+  service_hc_enabled:
+    type: boolean
+    description: enabled for the ServiceHealthCheck
+  service_hc_monitor_type:
+    type: string
+    description: monitor_type for the ServiceHealthCheck
+  service_hc_delay:
+    type: number
+    description: delay for the ServiceHealthCheck
+  service_hc_timeout:
+    type: number
+    description: timeout for the ServiceHealthCheck
+  service_hc_max_retries:
+    type: number
+    description: max_retries for the ServiceHealthCheck
+  service_hc_url_path:
+    type: string
+    description: url_path for the ServiceHealthCheck
+  hc_name:
+    type: string
+    description: display_name for the ServiceHealthCheck
+  si_refs:
+    type: string
+    description: service_instance_refs for the ServiceHealthCheck
+  si_interface_type:
+    type: string
+    description: interface_type for the ServiceHealthCheck
+  project:
+    type: string
+    description: project for the ServiceHealthCheck
+
+resources:
+  template_ServiceHealthCheck:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: { get_param: hc_name }
+      service_health_check_properties:
+        {
+          service_health_check_properties_enabled: { get_param: service_hc_enabled },
+          service_health_check_properties_monitor_type: { get_param: service_hc_monitor_type },
+          service_health_check_properties_delay: { get_param: service_hc_delay },
+          service_health_check_properties_timeout: { get_param: service_hc_timeout },
+          service_health_check_properties_max_retries: { get_param: service_hc_max_retries },
+          service_health_check_properties_url_path: { get_param: service_hc_url_path },
+        }
+      display_name: { get_param: hc_name }
+      service_instance_refs: [{ get_param: si_refs }]
+      service_instance_refs_data:
+        [{
+          service_instance_refs_data_interface_type: { get_param: si_interface_type },
+        }]
+      project: { get_param: project }
