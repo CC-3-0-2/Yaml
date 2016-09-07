@@ -1,0 +1,158 @@
+heat_template_version: 2015-04-30
+
+parameters:
+  template_VirtualNetwork_1:
+    type: string
+    description: Name of management network to be created
+  st_interface_type_1:
+    type: string
+    description: service_interface_type for the ServiceTemplate
+  svm_name_1:
+    type: string
+    description: Name of the SVM
+  svm_name_2:
+    type: string
+    description: Name of the SVM
+  svm_name_3:
+    type: string
+    description: Name of the SVM
+  flavor:
+    type: string
+    description: Flavor of the end VMs
+  image:
+    type: string
+    description: Name of the end VM image
+  availability_zone:
+    type: string
+    description: Name of the end VM image
+  virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol:
+    type: string
+    description: protocol for the VirtualMachineInterface
+  virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port:
+    type: number
+    description: port for the VirtualMachineInterface
+
+resources:
+
+  template_VirtualMachineInterface_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: template_VirtualNetwork_1 },
+        }
+      virtual_network_refs: [{ get_param: template_VirtualNetwork_1 }]
+      virtual_machine_interface_fat_flow_protocols:
+        {
+          virtual_machine_interface_fat_flow_protocols_fat_flow_protocol:
+            [{
+              virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol: { get_param: virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol },
+              virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port: { get_param: virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port },
+            }],
+        }
+
+  template_VirtualMachineInterface_2:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: template_VirtualNetwork_1 },
+        }
+      virtual_network_refs: [{ get_param: template_VirtualNetwork_1 }]
+      virtual_machine_interface_fat_flow_protocols:
+        {
+          virtual_machine_interface_fat_flow_protocols_fat_flow_protocol:
+            [{
+              virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol: { get_param: virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol },
+              virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port: { get_param: virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port },
+            }],
+        }
+
+  template_VirtualMachineInterface_3:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: template_VirtualNetwork_1 },
+        }
+      virtual_network_refs: [{ get_param: template_VirtualNetwork_1 }]
+      virtual_machine_interface_fat_flow_protocols:
+        {
+          virtual_machine_interface_fat_flow_protocols_fat_flow_protocol:
+            [{
+              virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol: { get_param: virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_protocol },
+              virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port: { get_param: virtual_machine_interface_fat_flow_protocols_fat_flow_protocol_port },
+            }],
+        }
+
+  template_InstanceIp_1:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ template_VirtualMachineInterface_1 ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: template_VirtualMachineInterface_1 }]
+      virtual_network_refs: [{ get_param: template_VirtualNetwork_1 }]
+
+  template_InstanceIp_2:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ template_VirtualMachineInterface_2 ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: template_VirtualMachineInterface_2 }]
+      virtual_network_refs: [{ get_param: template_VirtualNetwork_1 }]
+
+  template_InstanceIp_3:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ template_VirtualMachineInterface_3 ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: template_VirtualMachineInterface_3 }]
+      virtual_network_refs: [{ get_param: template_VirtualNetwork_1 }]
+
+  instance_1:
+    type: OS::Nova::Server
+    depends_on: [ template_InstanceIp_1 ]
+    properties:
+      name: {get_param: svm_name_1 }
+      image: { get_param:  image }
+      flavor: { get_param: flavor }
+      availability_zone: { get_param: availability_zone }
+      networks:
+        - port: { get_resource: template_VirtualMachineInterface_1 }
+      user_data_format: RAW
+      user_data: |
+            #cloud-config
+            password: ubuntu
+            chpasswd: { expire: False }
+            ssh_pwauth: True
+
+  instance_2:
+    type: OS::Nova::Server
+    depends_on: [ template_InstanceIp_2 ]
+    properties:
+      name: {get_param: svm_name_2 }
+      image: { get_param:  image }
+      flavor: { get_param: flavor }
+      availability_zone: { get_param: availability_zone }
+      networks:
+        - port: { get_resource: template_VirtualMachineInterface_2 }
+      user_data_format: RAW
+      user_data: |
+            #cloud-config
+            password: ubuntu
+            chpasswd: { expire: False }
+            ssh_pwauth: True
+
+  instance_3:
+    type: OS::Nova::Server
+    depends_on: [ template_InstanceIp_3 ]
+    properties:
+      name: {get_param: svm_name_3 }
+      image: { get_param:  image }
+      flavor: { get_param: flavor }
+      availability_zone: { get_param: availability_zone }
+      networks:
+        - port: { get_resource: template_VirtualMachineInterface_3 }
+      user_data_format: RAW
+      user_data: |
+            #cloud-config
+            password: ubuntu
+            chpasswd: { expire: False }
+            ssh_pwauth: True
